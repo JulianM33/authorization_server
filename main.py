@@ -1,3 +1,6 @@
+from typing import Union
+
+from fastapi.responses import FileResponse
 from fastapi import FastAPI, Body
 
 from app.schemas.api_schemas import UserSchema, UserLoginSchema
@@ -10,6 +13,11 @@ users = []
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
+
+
+@app.get("/forest")
+def read_item():
+    return FileResponse("resources/forest.png")
 
 
 @app.post("/user/signup", tags=["user"])
