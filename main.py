@@ -1,9 +1,10 @@
 import yaml
 from fastapi.responses import FileResponse
-from fastapi import FastAPI, Body
+from fastapi import FastAPI, Body, Depends
 import uvicorn
 
 from app.authorization.auth import create_authorization_token, get_password_hash, get_plain_text_password
+from app.authorization.bearer import Bearer
 from app.schemas.api_schemas import UserSchema, UserLoginSchema
 
 # Load config
@@ -20,7 +21,7 @@ def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/forest")
+@app.post("/forest", dependencies=[Depends(Bearer())])
 def read_item():
     return FileResponse("resources/forest.png")
 
