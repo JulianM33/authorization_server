@@ -46,8 +46,3 @@ def login_user(user_data: UserLoginSchema = Body(default=None)):
                 return {"access_token": token, "token_type": "bearer"}
     return {"Error, email not recognized! "}
 
-
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=8081, reload=True)
-
-
