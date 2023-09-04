@@ -13,26 +13,33 @@ with open("conf/config.yaml") as f:
 
 class Bearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
-        super(Bearer, self).__init__(auto_error=auto_error)
+        """
+        :param auto_error: set to True such that errors are raised if exceptions occur
+        """
+        super().__init__(auto_error=auto_error)
 
     async def __call__(self, request: Request):
+        """
+        Overridden function from HTTPBearer superclass, with own functionality added
+        :param request: FastAPI request object
+        :return: valid credentials if token is valid
+        """
         credentials: HTTPAuthorizationCredentials = await super(Bearer, self).__call__(request)
         if credentials:
             if not credentials.scheme == "Bearer":
                 raise HTTPException(status_code=403, detail="Invalid authentication scheme.")
-            if not self.verify_jwt(credentials.credentials):
-                raise HTTPException(status_code=403, detail="Invalid token or expired token.")
+            self.is_valid_jwt(credentials.credentials)
             return credentials.credentials
         else:
             raise HTTPException(status_code=403, detail="Invalid authorization code.")
 
-    def verify_jwt(self, jwt_token: str) -> bool:
-        is_valid_token: bool = False
-
-        try:
-            payload = decode_authorization_token(jwt_token)
-        except:
-            payload = None
+    def is_valid_jwt(self, jwt_token: str) -> bool:
+        """
+        :param jwt_token: the JWT token
+        :return: True iff JWT token is valid
+        """
+        payload = decode_authorization_token(jwt_token)
         if payload:
-            is_valid_token = True
-        return is_valid_token
+            return True
+        else:
+            return False
