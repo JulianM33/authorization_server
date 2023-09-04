@@ -1,14 +1,9 @@
-import yaml
 from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from app.authorization.auth import decode_authorization_token
 
 security = HTTPBearer()
-
-# Load config
-with open("conf/config.yaml") as f:
-    config = yaml.safe_load(f)
 
 
 class Bearer(HTTPBearer):
